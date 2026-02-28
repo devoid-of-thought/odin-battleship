@@ -16,8 +16,6 @@ function createDom(player1, player2) {
 
   function renderGameboard(player, playerContainerId) {
     const container = document.getElementById(playerContainerId);
-    playerTwo.populateComputerBoard();
-
     container.innerHTML = "";
     for (let i = 0; i < 10; i++) {
       for (let j = 0; j < 10; j++) {
@@ -76,7 +74,6 @@ function createDom(player1, player2) {
     addShipDragAndDropListeners(playerOne, "player-one-board");
     populateBoard(playerTwo, "player-two-board");
   }
-
   function populateBoard(player, playerContainerId) {
     const container = document.getElementById(playerContainerId);
     const cells = container.getElementsByClassName("cell");

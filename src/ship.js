@@ -16,6 +16,7 @@ function Ship(type) {
     x = xPos;
     y = yPos;
     rotation = rot;
+    coordinates = [];
     for (let i = 0; i < length; i++) {
       if (rotation === "0") {
         coordinates.push([x + i, y]);

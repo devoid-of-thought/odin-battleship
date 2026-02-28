@@ -29,15 +29,27 @@ function placeRandomShips(player) {
 }
 
 placeRandomShips(playerOne);
+playerTwo.populateComputerBoard();
+
 const domController = createDom(playerOne, playerTwo);
 
 const startButton = document.createElement("button");
 startButton.textContent = "Start Game";
+startButton.classList.add("btn");
 startButton.id = "start-btn";
 document.body.prepend(startButton);
 
+const resetButton = document.createElement("button");
+resetButton.textContent = "Reset Game";
+resetButton.classList.add("btn");
+resetButton.id = "reset-btn";
+resetButton.style.display = "none";
+document.body.prepend(resetButton);
+
 startButton.addEventListener("click", () => {
     if (playerOne.playersShips.every(ship => ship.placed)) {
+        const shipListContainer = document.getElementById("ship-list-container");
+        shipListContainer.style.display = "none";
         startGame(playerOne, playerTwo, domController);
         startButton.disabled = true;
         startButton.remove();
@@ -46,5 +58,7 @@ startButton.addEventListener("click", () => {
     }
 });
 
-
+resetButton.addEventListener("click", () => {
+    location.reload();
+});
 

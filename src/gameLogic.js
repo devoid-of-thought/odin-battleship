@@ -47,7 +47,7 @@ function startGame(playerOne, playerTwo, domController) {
     const y = parseInt(event.target.dataset.y);
     const result = playerTwo.playersGameboard.receiveAttack(x, y);
 
-    if (result === "Error: This cell has already been attacked") {
+    if (result && result.includes("Error")) {
       alert("You have already attacked this cell. Please choose a different target.");
       return;
     }
@@ -70,6 +70,7 @@ function startGame(playerOne, playerTwo, domController) {
       }
       domController.populateBoards();
       if (playerTwo.playersGameboard.allShipsSunk()) {
+        document.getElementById("reset-btn").style.display = "inline-block";
         alert("Player wins!");
         computerBoard.removeEventListener("click", handler);
       }
@@ -81,6 +82,7 @@ function startGame(playerOne, playerTwo, domController) {
     domController.populateBoards();
 
     if (playerTwo.playersGameboard.allShipsSunk()) {
+      document.getElementById("reset-btn").style.display = "inline-block";
       alert("Player wins!");
       computerBoard.removeEventListener("click", handler);
       return;
@@ -122,7 +124,7 @@ function startGame(playerOne, playerTwo, domController) {
             if (cordsThatWereHit.length === 0) {
               achievedHit = false;
             }
-            aiTurn();
+            setTimeout(aiTurn, 10); // Added delay to prevent stack overflow
             return;
           }
         }
@@ -149,6 +151,7 @@ function startGame(playerOne, playerTwo, domController) {
             cordsThatWereHit = [];
             possibleAttacks = [];
             populateCellsForSunkShip(hitShipData.ship, playerBoard, playerOne);
+            alert(`The computer sunk your ${hitShipData.ship.name}!`); // Added missing alert for guided attacks
           } else {
             cordsThatWereHit.push(coordinates);
             possibleAttacks = [];
@@ -156,16 +159,21 @@ function startGame(playerOne, playerTwo, domController) {
           
           domController.populateBoards();
           if (playerOne.playersGameboard.allShipsSunk()) {
+            document.getElementById("reset-btn").style.display = "inline-block";
             computerBoard.removeEventListener("click", handler);
             alert("Computer wins!");
             domController.populateComputersBoardOnWin();
             return;
           }
-          setTimeout(aiTurn, 100);
+          setTimeout(aiTurn, 500);
           return;
 
+        } else if (result === "Success: Miss!") {
+          possibleAttacks.pop();
         } else {
           possibleAttacks.pop();
+          setTimeout(aiTurn, 10); // Added delay to prevent stack overflow
+          return;
         }
       } else {
         const { coordinates, result } = playerTwo.makeRandomAttack(
@@ -197,11 +205,15 @@ function startGame(playerOne, playerTwo, domController) {
           
           domController.populateBoards();
           if (playerOne.playersGameboard.allShipsSunk()) {
+            document.getElementById("reset-btn").style.display = "inline-block";
             computerBoard.removeEventListener("click", handler);
             alert("Computer wins!");
             return;
           }
-          setTimeout(aiTurn, 100);
+          setTimeout(aiTurn, 500);
+          return;
+        } else if (result && result.includes("Error")) {
+          setTimeout(aiTurn, 10);
           return;
         }
       }
@@ -209,6 +221,7 @@ function startGame(playerOne, playerTwo, domController) {
       domController.populateBoards();
 
       if (playerOne.playersGameboard.allShipsSunk()) {
+        document.getElementById("reset-btn").style.display = "inline-block";
         computerBoard.removeEventListener("click", handler);
         alert("Computer wins!");
         return;
