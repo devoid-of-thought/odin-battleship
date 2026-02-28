@@ -1,4 +1,5 @@
 function Ship(type) {
+  const name = type;
   const length = {
     carrier: 5,
     battleship: 4,
@@ -7,6 +8,15 @@ function Ship(type) {
     destroyer: 2,
   }[type];
 
+  let x;
+  let y;
+  let rotation;
+
+  function setPosition(xPos, yPos, rot) {
+    x = xPos;
+    y = yPos;
+    rotation = rot;
+  }
   let hits = 0;
   function hit() {
     hits += 1;
@@ -17,10 +27,12 @@ function Ship(type) {
   }
 
   return {
+    setPosition,
+    name,
     length,
     hit,
     isSunk,
   };
 }
 
-module.exports = Ship;
+export default Ship;

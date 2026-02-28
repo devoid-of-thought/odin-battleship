@@ -82,8 +82,90 @@ h6 {
   --primary-color: #020100;
   --secondary-color: #801a86;
   --accent-color: #e768f3;
+  --cell-size: 70px;
+  --border-size: 2px;
 }
 body{
   background-color: var(--far-background-color);
   font-family: 'Space Grotesk', sans-serif;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  gap: 50px;
+}
+
+#player-one-container, #player-two-container{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+}
+#player-one-container h1, #player-two-container h1{
+  align-content: center;
+}
+
+#player-one-board, #player-two-board{
+  display: grid;
+  grid-template-columns: repeat(10,var(--cell-size));
+  grid-template-rows: repeat(10,var(--cell-size));
+  border: #020100 solid var(--border-size);
+  height: calc(10*var(--cell-size)+var(--border-size));
+  width: calc(10*var(--cell-size)+var(--border-size));
+}
+
+.cell {
+  background-color: var(--close-background-color);
+  border: #020100 solid 1px;
+  display: grid;
+  text-align: center;
+  place-items: center;  
+  font-size: 2rem;
+  font-weight: bold;
+}
+.cell.ship {
+  background-color: var(--primary-color);
+}
+#ship-list {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;
+  align-items: center;
+  gap: 10px;
+  height: 500px;
+  width: 200px;
+  background-color: var(--close-background-color);
+  border: #020100 solid var(--border-size);
+}
+#ship-list .ship-item {
+  background-color: var(--primary-color);
+  width: max-content;
+  height: 40px;
+  display: grid;
+  justify-content: center;
+  align-items: center;
+  font-size: 1.2rem;
+}
+
+.hover-valid {
+  background-color: rgba(0, 255, 0, 0.5); /* Semi-transparent green */
+  cursor: copy;
+}
+
+.hover-invalid {
+  background-color: rgba(255, 0, 0, 0.5); /* Semi-transparent red */
+  cursor: not-allowed;
+}
+
+.ship-item {
+  cursor: grab;
+  /* Add these to ensure the item maintains shape when vertical */
+  display: inline-block; 
+  padding: 5px;
+  background-color: lightgray;
+}
+
+.ship-item:active {
+  cursor: grabbing;
 }
