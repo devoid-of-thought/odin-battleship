@@ -114,6 +114,9 @@ function Gameboard() {
       board[y][x] = "o";
       return logSuccess("Miss");
     }
+    else {      
+      return logError("This cell has already been attacked");
+    }
   }
   function allShipsSunk() {
     for (let i = 0; i < 10; i++) {

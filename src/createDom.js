@@ -13,21 +13,25 @@ function createDom(player1, player2) {
     renderGameboard(playerOne, "player-one-board");
     renderGameboard(playerTwo, "player-two-board");
   }
+
   function renderGameboard(player, playerContainerId) {
-    const container = document.getElementById(playerContainerId);
+    const container = document.getElementById(playerContainerId);playerTwo.populateComputerBoard();
+
     container.innerHTML = "";
     for (let i = 0; i < 10; i++) {
       for (let j = 0; j < 10; j++) {
         const cell = document.createElement("div");
         cell.classList.add("cell");
+        cell.dataset.x = j;
+        cell.dataset.y = i;
         container.appendChild(cell);
       }
     }
   }
+
   function createShipList(player) {
     const container = document.getElementById("ship-list-container");
-    const shipList =
-      document.getElementById("ship-list") || document.createElement("div");
+    const shipList = document.getElementById("ship-list") || document.createElement("div");
     shipList.innerHTML = "";
     shipList.id = "ship-list";
 
@@ -35,16 +39,13 @@ function createDom(player1, player2) {
       const shipItemContainer = document.createElement("div");
       shipItemContainer.classList.add("ship-item-container");
       const shipLabel = document.createElement("span");
-      shipLabel.textContent =
-        shipObj.ship.length === 1
-          ? "Submarine"
-          : `Length: ${shipObj.ship.length}`;
+      shipLabel.textContent = shipObj.ship.length === 1 ? "Submarine" : `Length: ${shipObj.ship.length}`;
       shipItemContainer.appendChild(shipLabel);
-      const shipItem = document.createElement("div");
+      
       if (!shipObj.placed) {
+        const shipItem = document.createElement("div");
         shipItem.classList.add("ship-item");
         shipItem.textContent = "----".repeat(shipObj.ship.length);
-
         shipItem.draggable = true;
 
         shipItem.addEventListener("dragstart", (e) => {
@@ -56,9 +57,9 @@ function createDom(player1, player2) {
           selectedShip = null;
           clearHoverEffects();
         });
+        shipItemContainer.appendChild(shipItem);
       }
-      shipItemContainer.appendChild(shipLabel);
-      shipItemContainer.appendChild(shipItem);
+      
       shipList.appendChild(shipItemContainer);
     });
 
@@ -70,16 +71,20 @@ function createDom(player1, player2) {
     addShipDragAndDropListeners(playerOne, "player-one-board");
     populateBoard(playerTwo, "player-two-board");
   }
+
   function populateBoard(player, playerContainerId) {
     const container = document.getElementById(playerContainerId);
     const cells = container.getElementsByClassName("cell");
-    console.log(cells);
+    
     for (let i = 0; i < 10; i++) {
       for (let j = 0; j < 10; j++) {
         const cellIndex = i * 10 + j;
         const cellCur = cells[cellIndex];
-        if (player.playersGameboard.board[i][j] === 1) {
-          cellCur.classList.add("ship");
+        
+        if (player.playersGameboard.board[i][j] === 1 || (typeof player.playersGameboard.board[i][j] === 'object' && player.playersGameboard.board[i][j] !== null)) {
+          if (playerContainerId === "player-one-board") {
+              cellCur.classList.add("ship");
+          }
         } else if (player.playersGameboard.board[i][j] === "x") {
           cellCur.classList.add("hit");
           cellCur.textContent = "x";
@@ -90,6 +95,7 @@ function createDom(player1, player2) {
       }
     }
   }
+
   function addRotationControls() {
     const container = document.getElementById("ship-list-container");
 
@@ -136,23 +142,27 @@ function createDom(player1, player2) {
         const shipObj = player.playersShips[selectedShip];
         const shipLength = shipObj.ship.length;
         
-        const x = i % 10;
-        const y = Math.floor(i / 10);
+        const x = parseInt(cell.dataset.x);
+        const y = parseInt(cell.dataset.y);
         
-        let isValid = true;
+        let isValid = player.playersGameboard.checkIfEligible(shipLength, x, y, currentRotation);
         const affectedCells = [];
 
-        player.playersGameboard.checkIfEligible(shipLength, x, y, currentRotation) ? isValid = true : isValid = false;
-
         if (currentRotation === "0") {
-          for (let j = 0; j < shipLength; j++) {
-            const targetCell = cells[i + j];
-            affectedCells.push(targetCell);
+          if (x + shipLength <= 10) {
+              for (let j = 0; j < shipLength; j++) {
+                affectedCells.push(cells[i + j]);
+              }
+          } else {
+              isValid = false;
           }
         } else {
-          for (let j = 0; j < shipLength; j++) {
-            const targetCell = cells[i + j * 10];
-            affectedCells.push(targetCell);
+          if (y + shipLength <= 10) {
+              for (let j = 0; j < shipLength; j++) {
+                affectedCells.push(cells[i + j * 10]);
+              }
+          } else {
+              isValid = false;
           }
         }
         
@@ -164,7 +174,7 @@ function createDom(player1, player2) {
       });
 
       cell.addEventListener("dragleave", (e) => {
-         if(e.relatedTarget && !container.contains(e.relatedTarget)) {
+         if (e.relatedTarget && !container.contains(e.relatedTarget)) {
              clearHoverEffects();
          }
       });
@@ -172,13 +182,14 @@ function createDom(player1, player2) {
       cell.addEventListener("drop", (e) => {
         e.preventDefault();
         clearHoverEffects();
-        selectedShip = null;
+
+        if (selectedShip === null) return;
 
         const shipIndex = e.dataTransfer.getData("text/plain");
         const shipObj = player.playersShips[shipIndex];
 
-        const x = i % 10;
-        const y = Math.floor(i / 10);
+        const x = parseInt(cell.dataset.x);
+        const y = parseInt(cell.dataset.y);
 
         if (shipObj && !shipObj.placed) {
           const result = player.playersGameboard.placeShip(
@@ -199,9 +210,14 @@ function createDom(player1, player2) {
             createShipList(player);
           }
         }
+        selectedShip = null;
       });
     }
   }
+  
+  return {
+    populateBoards,
+  };
 }
 
 export { createDom };

@@ -89,10 +89,27 @@ body{
   background-color: var(--far-background-color);
   font-family: 'Space Grotesk', sans-serif;
   display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
   min-height: 100vh;
   gap: 50px;
+}
+.battleship-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 50px;
+}
+
+#start-btn{
+  padding: 15px 30px;
+  background-color: var(--primary-color);
+  color: white;
+  border: none;
+  cursor: pointer;
+  font-size: 1.5rem;
+  border-radius: 20px;
 }
 
 #player-one-container, #player-two-container{
@@ -127,6 +144,12 @@ body{
 .cell.ship {
   background-color: var(--primary-color);
 }
+.cell.hit,.cell.hit.ship {
+  background-color: var(--secondary-color);
+}
+.cell.miss {
+  background-color: white;
+}
 #ship-list {
   display: flex;
   flex-direction: column;
@@ -149,18 +172,17 @@ body{
 }
 
 .hover-valid {
-  background-color: rgba(0, 255, 0, 0.5); /* Semi-transparent green */
+  background-color: rgba(0, 255, 0, 0.5);
   cursor: copy;
 }
 
 .hover-invalid {
-  background-color: rgba(255, 0, 0, 0.5); /* Semi-transparent red */
+  background-color: rgba(255, 0, 0, 0.5);
   cursor: not-allowed;
 }
 
 .ship-item {
   cursor: grab;
-  /* Add these to ensure the item maintains shape when vertical */
   display: inline-block; 
   padding: 5px;
   background-color: lightgray;
@@ -168,4 +190,20 @@ body{
 
 .ship-item:active {
   cursor: grabbing;
+}
+#ship-list-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+}
+#rotate-btn {
+  padding: 10px 20px;
+  background-color: var(--primary-color);
+  color: white;
+  border: none;
+  cursor: pointer;
+  font-size: 1rem;
+  border-radius: 20px;
+  margin-bottom: 20px;
 }

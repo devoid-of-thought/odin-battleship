@@ -54,12 +54,19 @@ import Ship from "./ship.js";
             if (!attackCoordinates) {
                 return logError("No more possible attacks");
             }
-            return opponentGameboard.receiveAttack(attackCoordinates[0], attackCoordinates[1]);
+            console.log("Computer attacks:", attackCoordinates);
+            return { coordinates: attackCoordinates, result: opponentGameboard.receiveAttack(attackCoordinates[0], attackCoordinates[1]) };
+        }
+
+        function makeGuidedAttack(opponentGameboard, possibleAttacksList) {
+            const attackCoordinates = possibleAttacksList.at(-1);   
+            return { coordinates: attackCoordinates, result: opponentGameboard.receiveAttack(attackCoordinates[0], attackCoordinates[1]) };
         }
 
         return {
             ...player,
             makeRandomAttack,
+            makeGuidedAttack,
             populateComputerBoard,
         }
     }
