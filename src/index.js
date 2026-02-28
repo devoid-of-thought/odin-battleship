@@ -8,27 +8,6 @@ import { startGame } from "./gameLogic.js";
 const playerOne = Player();
 const playerTwo = computerPlayer();
 
-function placeRandomShips(player) {
-  player.playersShips.forEach((shipObj) => {
-    while (!shipObj.placed) {
-      const x = Math.floor(Math.random() * 10);
-      const y = Math.floor(Math.random() * 10);
-      const rotation = Math.random() < 0.5 ? "0" : "1";
-      const result = player.playersGameboard.placeShip(
-        shipObj.ship,
-        x,
-        y,
-        rotation,
-      );
-      if (result.includes("successfully")) {
-        shipObj.ship.setPosition(x, y, rotation);
-        shipObj.placed = true;
-      }
-    }
-  });
-}
-
-placeRandomShips(playerOne);
 playerTwo.populateComputerBoard();
 
 const domController = createDom(playerOne, playerTwo);
@@ -37,14 +16,13 @@ const startButton = document.createElement("button");
 startButton.textContent = "Start Game";
 startButton.classList.add("btn");
 startButton.id = "start-btn";
-document.body.prepend(startButton);
+document.querySelector(".buttons-container").prepend(startButton);
 
 const resetButton = document.createElement("button");
 resetButton.textContent = "Reset Game";
 resetButton.classList.add("btn");
 resetButton.id = "reset-btn";
-resetButton.style.display = "none";
-document.body.prepend(resetButton);
+document.querySelector(".buttons-container").prepend(resetButton);
 
 startButton.addEventListener("click", () => {
     if (playerOne.playersShips.every(ship => ship.placed)) {
@@ -53,6 +31,7 @@ startButton.addEventListener("click", () => {
         startGame(playerOne, playerTwo, domController);
         startButton.disabled = true;
         startButton.remove();
+        resetButton.style.display = "none";
     } else {
         alert("Please place all your ships before starting the game!");
     }

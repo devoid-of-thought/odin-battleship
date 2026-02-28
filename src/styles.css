@@ -161,6 +161,22 @@ body{
   background-color: var(--close-background-color);
   border: #020100 solid var(--border-size);
 }
+.buttons-container {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  align-items: center;
+  justify-items: center;
+  gap: 20px;
+  width: 100%;
+}
+#start-btn {
+  max-width: 200px;
+}
+#reset-btn {
+  max-width: 200px;
+    margin-left: 100px;
+
+}
 #ship-list .ship-item {
   background-color: var(--primary-color);
   width: max-content;
