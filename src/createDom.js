@@ -15,7 +15,8 @@ function createDom(player1, player2) {
   }
 
   function renderGameboard(player, playerContainerId) {
-    const container = document.getElementById(playerContainerId);playerTwo.populateComputerBoard();
+    const container = document.getElementById(playerContainerId);
+    playerTwo.populateComputerBoard();
 
     container.innerHTML = "";
     for (let i = 0; i < 10; i++) {
@@ -31,7 +32,8 @@ function createDom(player1, player2) {
 
   function createShipList(player) {
     const container = document.getElementById("ship-list-container");
-    const shipList = document.getElementById("ship-list") || document.createElement("div");
+    const shipList =
+      document.getElementById("ship-list") || document.createElement("div");
     shipList.innerHTML = "";
     shipList.id = "ship-list";
 
@@ -39,9 +41,12 @@ function createDom(player1, player2) {
       const shipItemContainer = document.createElement("div");
       shipItemContainer.classList.add("ship-item-container");
       const shipLabel = document.createElement("span");
-      shipLabel.textContent = shipObj.ship.length === 1 ? "Submarine" : `Length: ${shipObj.ship.length}`;
+      shipLabel.textContent =
+        shipObj.ship.length === 1
+          ? "Submarine"
+          : `Length: ${shipObj.ship.length}`;
       shipItemContainer.appendChild(shipLabel);
-      
+
       if (!shipObj.placed) {
         const shipItem = document.createElement("div");
         shipItem.classList.add("ship-item");
@@ -59,7 +64,7 @@ function createDom(player1, player2) {
         });
         shipItemContainer.appendChild(shipItem);
       }
-      
+
       shipList.appendChild(shipItemContainer);
     });
 
@@ -75,20 +80,50 @@ function createDom(player1, player2) {
   function populateBoard(player, playerContainerId) {
     const container = document.getElementById(playerContainerId);
     const cells = container.getElementsByClassName("cell");
-    
+
     for (let i = 0; i < 10; i++) {
       for (let j = 0; j < 10; j++) {
         const cellIndex = i * 10 + j;
         const cellCur = cells[cellIndex];
-        
-        if (player.playersGameboard.board[i][j] === 1 || (typeof player.playersGameboard.board[i][j] === 'object' && player.playersGameboard.board[i][j] !== null)) {
+
+        if (
+          player.playersGameboard.board[i][j] === 1 ||
+          (typeof player.playersGameboard.board[i][j] === "object" &&
+            player.playersGameboard.board[i][j] !== null)
+        ) {
           if (playerContainerId === "player-one-board") {
-              cellCur.classList.add("ship");
+            cellCur.classList.add("ship");
           }
         } else if (player.playersGameboard.board[i][j] === "x") {
           cellCur.classList.add("hit");
           cellCur.textContent = "x";
         } else if (player.playersGameboard.board[i][j] === "o") {
+          cellCur.classList.add("miss");
+          cellCur.textContent = "o";
+        }
+      }
+    }
+  }
+
+  function populateComputersBoardOnWin() {
+    const container = document.getElementById("player-two-board");
+    const cells = container.getElementsByClassName("cell");
+
+    for (let i = 0; i < 10; i++) {
+      for (let j = 0; j < 10; j++) {
+        const cellIndex = i * 10 + j;
+        const cellCur = cells[cellIndex];
+
+        if (
+          playerTwo.playersGameboard.board[i][j] === 1 ||
+          (typeof playerTwo.playersGameboard.board[i][j] === "object" &&
+            playerTwo.playersGameboard.board[i][j] !== null)
+        ) {
+          cellCur.classList.add("ship");
+        } else if (playerTwo.playersGameboard.board[i][j] === "x") {
+          cellCur.classList.add("hit");
+          cellCur.textContent = "x";
+        } else if (playerTwo.playersGameboard.board[i][j] === "o") {
           cellCur.classList.add("miss");
           cellCur.textContent = "o";
         }
@@ -120,7 +155,7 @@ function createDom(player1, player2) {
 
   function clearHoverEffects() {
     const cells = document.querySelectorAll(".cell");
-    cells.forEach(cell => {
+    cells.forEach((cell) => {
       cell.classList.remove("hover-valid");
       cell.classList.remove("hover-invalid");
     });
@@ -136,37 +171,42 @@ function createDom(player1, player2) {
       cell.addEventListener("dragover", (e) => {
         e.preventDefault();
         clearHoverEffects();
-        
+
         if (selectedShip === null) return;
-        
+
         const shipObj = player.playersShips[selectedShip];
         const shipLength = shipObj.ship.length;
-        
+
         const x = parseInt(cell.dataset.x);
         const y = parseInt(cell.dataset.y);
-        
-        let isValid = player.playersGameboard.checkIfEligible(shipLength, x, y, currentRotation);
+
+        let isValid = player.playersGameboard.checkIfEligible(
+          shipLength,
+          x,
+          y,
+          currentRotation,
+        );
         const affectedCells = [];
 
         if (currentRotation === "0") {
           if (x + shipLength <= 10) {
-              for (let j = 0; j < shipLength; j++) {
-                affectedCells.push(cells[i + j]);
-              }
+            for (let j = 0; j < shipLength; j++) {
+              affectedCells.push(cells[i + j]);
+            }
           } else {
-              isValid = false;
+            isValid = false;
           }
         } else {
           if (y + shipLength <= 10) {
-              for (let j = 0; j < shipLength; j++) {
-                affectedCells.push(cells[i + j * 10]);
-              }
+            for (let j = 0; j < shipLength; j++) {
+              affectedCells.push(cells[i + j * 10]);
+            }
           } else {
-              isValid = false;
+            isValid = false;
           }
         }
-        
-        affectedCells.forEach(targetCell => {
+
+        affectedCells.forEach((targetCell) => {
           if (targetCell) {
             targetCell.classList.add(isValid ? "hover-valid" : "hover-invalid");
           }
@@ -174,9 +214,9 @@ function createDom(player1, player2) {
       });
 
       cell.addEventListener("dragleave", (e) => {
-         if (e.relatedTarget && !container.contains(e.relatedTarget)) {
-             clearHoverEffects();
-         }
+        if (e.relatedTarget && !container.contains(e.relatedTarget)) {
+          clearHoverEffects();
+        }
       });
 
       cell.addEventListener("drop", (e) => {
@@ -196,7 +236,7 @@ function createDom(player1, player2) {
             shipObj.ship,
             x,
             y,
-            currentRotation
+            currentRotation,
           );
 
           if (typeof result === "string" && result.includes("successfully")) {
@@ -214,9 +254,10 @@ function createDom(player1, player2) {
       });
     }
   }
-  
+
   return {
     populateBoards,
+    populateComputersBoardOnWin,
   };
 }
 
