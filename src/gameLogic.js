@@ -232,8 +232,4 @@ function startGame(playerOne, playerTwo, domController) {
   });
 }
 
-function changeTurn(currentPlayer, opponent) {
-  return currentPlayer === "playerOne" ? "playerTwo" : "playerOne";
-}
-
-export { startGame, changeTurn };
+export { startGame };
